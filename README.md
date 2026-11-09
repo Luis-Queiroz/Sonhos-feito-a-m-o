@@ -4,7 +4,7 @@ Loja virtual da Sonhos RM Bags, com bolsas de luxo em crochê feitas à mão em 
 
 O site é estático, sem servidor e sem etapa de build. A cliente escolhe a bolsa, calcula o frete pelo CEP, preenche os dados e envia o pedido pronto para o WhatsApp da loja.
 
-> **Atenção:** preços, frete e prazos ainda são exemplos, e os depoimentos são simulados. Veja a lista [Antes de divulgar](#antes-de-divulgar).
+> **Atenção:** preços, frete e prazos ainda são exemplos. Veja a lista [Antes de divulgar](#antes-de-divulgar).
 
 ## Como publicar no GitHub Pages
 
@@ -61,6 +61,17 @@ Preços, prazos e frete ficam no bloco `CONFIG`, no início de [`assets/js/loja.
 | `regioes` | Valor e dias úteis de transporte por região |
 | `documento` e `enderecoLoja` | CPF ou CNPJ e endereço exibidos no rodapé |
 | `whatsapp` | Número que recebe os pedidos |
+| `depoimentos` | Avaliações reais de clientes. Vazio, a seção fica oculta |
+
+Exemplo de depoimento:
+
+```js
+depoimentos: [
+  { texto: 'Amei a bolsa!', nome: 'Maria S.', cidade: 'Londrina/PR', estrelas: 5 }
+],
+```
+
+Use somente depoimentos reais, com autorização de quem escreveu.
 
 Os textos e os cards das bolsas ficam no `index.html`. Para adicionar um modelo, crie o card no HTML e a entrada correspondente em `produtos`, usando o mesmo identificador.
 
@@ -78,7 +89,7 @@ Os textos e os cards das bolsas ficam no `index.html`. Para adicionar um modelo,
 - [ ] Preencher os preços reais das bolsas
 - [ ] Preencher a tabela de frete e os prazos reais
 - [ ] Confirmar as formas de pagamento (Pix e cartão)
-- [ ] Trocar os depoimentos de exemplo por avaliações reais, com autorização das clientes
+- [ ] Adicionar avaliações reais em `depoimentos`, com autorização das clientes (opcional)
 - [ ] Confirmar o nome "Bolsa Rosa"
 - [ ] Preencher `documento` e `enderecoLoja`, exigidos para venda online pelo Decreto 7.962/2013
 - [ ] Fazer um pedido de teste até o WhatsApp

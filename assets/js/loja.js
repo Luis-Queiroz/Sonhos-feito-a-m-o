@@ -14,6 +14,14 @@ const CONFIG = {
   // Acréscimo no frete a cada bolsa além da primeira, por envio.
   adicionalPorBolsa: 8,
 
+  // Depoimentos REAIS de clientes, com autorização delas. Vazio, a seção fica oculta.
+  // Exemplo de item: { texto: 'Amei a bolsa!', nome: 'Maria S.', cidade: 'Londrina/PR', estrelas: 5 }
+  depoimentos: [
+    { texto: 'ALTERE AQUI', nome: 'ALTERE AQUI', cidade: 'ALTERE AQUI', estrelas: 5 },
+    { texto: 'ALTERE AQUI', nome: 'ALTERE AQUI', cidade: 'ALTERE AQUI', estrelas: 5 },
+    { texto: 'ALTERE AQUI', nome: 'ALTERE AQUI', cidade: 'ALTERE AQUI', estrelas: 5 }
+  ],
+
   produtos: {
     ana: {
       nome: 'Bag Ana', preco: 289,
@@ -543,6 +551,17 @@ document.addEventListener('change', (e) => {
 });
 
 /* ---------- Início ---------- */
+if (CONFIG.depoimentos.length) {
+  $('#lista-depoimentos').innerHTML = CONFIG.depoimentos.map((d) => {
+    const n = Math.min(5, Math.max(1, Number(d.estrelas) || 5));
+    return `<li class="revelar bg-marfim rounded-3xl p-7 flex flex-col">
+        <span class="text-ouro-texto tracking-widest" role="img" aria-label="${n} de 5 estrelas">${'★'.repeat(n)}${'☆'.repeat(5 - n)}</span>
+        <blockquote class="mt-4 font-titulo text-2xl leading-snug flex-1">“${esc(d.texto)}”</blockquote>
+        <p class="mt-5 text-sm"><strong class="block font-medium">${esc(d.nome)}</strong>${d.cidade ? `<span class="text-tinta-suave">${esc(d.cidade)}</span>` : ''}</p>
+      </li>`;
+  }).join('');
+  $('#depoimentos').hidden = false;
+}
 $('#ano').textContent = new Date().getFullYear();
 $$('[data-preco]').forEach((el) => { el.textContent = reais(CONFIG.produtos[el.dataset.preco].preco); });
 $$('[data-texto-producao]').forEach((el) => { el.textContent = `São ${CONFIG.diasProducao} dias úteis até a sua bolsa ficar pronta.`; });
