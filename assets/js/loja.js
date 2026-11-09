@@ -17,7 +17,7 @@ const CONFIG = {
   // Depoimentos REAIS de clientes, com autorização delas. Vazio, a seção fica oculta.
   // Exemplo de item: { texto: 'Amei a bolsa!', nome: 'Maria S.', cidade: 'Londrina/PR', estrelas: 5 }
   depoimentos: [
-    { texto: 'ALTERE AQUI', nome: 'ALTERE AQUI', cidade: 'ALTERE AQUI', estrelas: 5 },
+    { texto: 'Simplesmente impecável! Dá para ver todo o capricho em cada detalhe da bolsa, além do atendimento maravilhoso, sempre tão atencioso! Amei a experiência e já estou ansiosa para comprar a próxima! 🤭🥰', nome: 'Mari', cidade: 'Londrina/PR', estrelas: 5 },
     { texto: 'ALTERE AQUI', nome: 'ALTERE AQUI', cidade: 'ALTERE AQUI', estrelas: 5 },
     { texto: 'ALTERE AQUI', nome: 'ALTERE AQUI', cidade: 'ALTERE AQUI', estrelas: 5 }
   ],
