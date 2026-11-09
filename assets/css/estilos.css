@@ -1,0 +1,30 @@
+:focus-visible { outline: 3px solid #7A1420; outline-offset: 3px; border-radius: 4px; }
+.bg-noir :focus-visible, .bg-vinho :focus-visible { outline-color: #DCC295; }
+.sobrelinha { letter-spacing: .22em; text-transform: uppercase; font-size: .75rem; font-weight: 500; }
+.revelar { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+.revelar.visivel { opacity: 1; transform: none; }
+
+dialog { color: #2A211A; background: #FBF7F0; padding: 0; border: 0; }
+dialog::backdrop { background: rgba(22, 17, 13, .6); }
+#sacola { margin: 0 0 0 auto; width: min(100%, 30rem); height: 100dvh; max-height: none; max-width: none; }
+#sacola[open] { display: flex; flex-direction: column; animation: entrarLado .28s ease; }
+#produto { width: min(calc(100% - 2rem), 58rem); max-height: calc(100dvh - 2rem); border-radius: 1.5rem; margin: auto; }
+@keyframes entrarLado { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+.campo { width: 100%; background: #fff; border: 1px solid #D8CBB7; border-radius: .75rem; padding: .7rem .85rem; font-size: 1rem; }
+.campo:focus { outline: 2px solid #7A1420; outline-offset: 0; border-color: #7A1420; }
+.btn-principal { display: inline-flex; justify-content: center; align-items: center; gap: .6rem; background: #7A1420; color: #FBF7F0; font-weight: 500; padding: .85rem 1.5rem; border-radius: 999px; transition: background-color .2s; }
+.btn-principal:hover { background: #5E0F18; }
+.btn-contorno { display: inline-flex; justify-content: center; align-items: center; gap: .6rem; border: 1px solid #2A211A; font-weight: 500; padding: .8rem 1.5rem; border-radius: 999px; transition: background-color .2s, color .2s; }
+.btn-contorno:hover { background: #2A211A; color: #FBF7F0; }
+summary { cursor: pointer; list-style: none; }
+summary::-webkit-details-marker { display: none; }
+details[open] .sinal { transform: rotate(45deg); }
+.sinal { transition: transform .2s; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .revelar { opacity: 1; transform: none; transition: none; }
+  #sacola[open] { animation: none; }
+  * { transition: none !important; }
+}
