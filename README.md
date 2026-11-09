@@ -1,6 +1,6 @@
 # Sonhos RM Bags
 
-Loja virtual da Sonhos RM Bags, com bolsas de luxo em crochê feitas à mão pela artesã Regiana Márcia, em Cambé/PR.
+Loja virtual da Sonhos RM Bags, com bolsas de luxo em crochê feitas à mão em Cambé/PR.
 
 O site é estático, sem servidor e sem etapa de build. A cliente escolhe a bolsa, calcula o frete pelo CEP, preenche os dados e envia o pedido pronto para o WhatsApp da loja.
 

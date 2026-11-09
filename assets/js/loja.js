@@ -42,6 +42,23 @@ const CONFIG = {
   }
 };
 
+/* ---------- Ao recarregar (F5), a página volta para o topo ---------- */
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+const navegacao = performance.getEntriesByType('navigation')[0];
+if (navegacao && navegacao.type === 'reload') {
+  if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+  window.scrollTo({ top: 0, behavior: 'instant' });
+  window.addEventListener('load', () => window.scrollTo({ top: 0, behavior: 'instant' }));
+} else if (location.hash) {
+  // Link direto para uma seção (ex.: #loja): rola até ela depois que as fotos carregam
+  const irParaSecao = () => {
+    const alvo = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (alvo) alvo.scrollIntoView({ behavior: 'instant' });
+  };
+  irParaSecao();
+  window.addEventListener('load', irParaSecao);
+}
+
 /* ---------- Utilidades ---------- */
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -172,7 +189,7 @@ function htmlResultado() {
   if (entrega.estado === 'semconexao' && !entrega.uf) return '<p class="text-sm text-vinho">Não foi possível consultar o CEP agora.</p>' + seletorUf;
 
   const opcoes = opcoesFrete();
-  if (!opcoes.length) return '<p class="text-sm text-vinho">Ainda não temos frete para esse destino. Fale com a Regiana no WhatsApp.</p>';
+  if (!opcoes.length) return '<p class="text-sm text-vinho">Ainda não temos frete para esse destino. Fale conosco no WhatsApp.</p>';
   const nome = 'envio-' + (++idCalc);
   const sel = opcoes.find((o) => o.id === entrega.envio) || opcoes[0];
   const cidadeUf = entrega.cidade ? entrega.cidade + '/' + entrega.uf : entrega.uf;
@@ -223,7 +240,7 @@ function abrirProduto(id) {
       </button>
     </div>
     <div class="grid md:grid-cols-2">
-      <div class="bg-areia"><img src="${foto.src}" alt="${esc(foto.alt)}" class="w-full h-full max-h-[50vh] md:max-h-none object-cover"></div>
+      <div class="bg-areia flex items-center justify-center p-4 md:p-6"><img src="${foto.src}" alt="${esc(foto.alt)}" class="w-full h-auto max-h-[45vh] md:max-h-[calc(100dvh-7rem)] object-contain rounded-2xl"></div>
       <div class="p-6 sm:p-8">
         <h2 id="produto-nome" class="font-titulo text-4xl font-semibold pr-8">${esc(p.nome)}</h2>
         <p class="mt-2 text-2xl font-medium">${reais(p.preco)}</p>
@@ -309,7 +326,7 @@ function viewDados() {
           <div class="grid grid-cols-2 gap-2">
             ${['Pix', 'Cartão de crédito'].map((f) => `<label class="flex items-center gap-2 border border-[#D8CBB7] bg-white rounded-xl p-3 cursor-pointer"><input type="radio" name="pagamento" value="${f}" class="accent-[#7A1420]" ${c.pagamento === f ? 'checked' : ''}>${f}</label>`).join('')}
           </div>
-          <p class="text-xs text-tinta-suave mt-2">A Regiana envia os dados de pagamento pelo WhatsApp. Nenhum dado de cartão é digitado aqui.</p>
+          <p class="text-xs text-tinta-suave mt-2">Enviamos os dados de pagamento pelo WhatsApp. Nenhum dado de cartão é digitado aqui.</p>
         </fieldset>
         <label class="block col-span-6"><span class="block text-sm mb-1">Observações (opcional)</span><textarea class="campo" name="observacoes" rows="2" placeholder="É para presente? Prefere outra cor?">${esc(c.observacoes)}</textarea></label>
       </div>
@@ -325,7 +342,7 @@ function mensagemPedido() {
   const c = cliente;
   const linhas = Object.entries(itens).map(([id, q]) => `${q}x ${CONFIG.produtos[id].nome}: ${reais(CONFIG.produtos[id].preco * q)}`);
   return [
-    'Olá, Regiana! Quero finalizar meu pedido pelo site.',
+    'Olá, Sonhos RM! Quero finalizar meu pedido pelo site.',
     '',
     `*Pedido ${codigoPedido}*`,
     ...linhas,
@@ -362,7 +379,7 @@ function viewRevisao() {
       </section>
       <section>
         <h3 class="font-medium mb-2">Pagamento</h3>
-        <p class="text-tinta-suave">${esc(c.pagamento)}, com os dados enviados pela Regiana no WhatsApp.</p>
+        <p class="text-tinta-suave">${esc(c.pagamento)}, com os dados de pagamento enviados pelo nosso WhatsApp.</p>
       </section>
     </div>
     <footer class="shrink-0 border-t border-areia px-5 py-4">
@@ -376,7 +393,7 @@ function viewEnviado() {
   return cabecalhoSacola('Pedido criado') + `<div class="flex-1 flex flex-col items-center justify-center text-center p-8">
       <p class="font-script text-5xl text-ouro-texto">Obrigada!</p>
       <p class="mt-3 text-lg">Seu pedido <strong class="font-medium">${esc(codigoPedido)}</strong> foi aberto no WhatsApp.</p>
-      <p class="mt-2 text-tinta-suave">É só tocar em enviar na conversa. A Regiana confirma os detalhes e passa os dados de pagamento.</p>
+      <p class="mt-2 text-tinta-suave">É só tocar em enviar na conversa. Nós confirmamos os detalhes e enviamos os dados de pagamento.</p>
       <button type="button" data-acao="fechar-sacola" class="btn-contorno mt-6">Voltar para a loja</button>
     </div>`;
 }
