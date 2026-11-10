@@ -22,6 +22,17 @@ const CONFIG = {
     { texto: 'ALTERE AQUI', nome: 'ALTERE AQUI', cidade: 'ALTERE AQUI', estrelas: 5 }
   ],
 
+  // Cupons de desconto. O código é o nome entre aspas (maiúsculas, sem espaços).
+  //   tipo: 'porcentagem' (valor = % sobre as bolsas), 'reais' (valor = R$ de desconto) ou 'frete' (frete grátis)
+  //   minimo: compra mínima em R$ nas bolsas (opcional)
+  //   validade: último dia de uso, no formato 'AAAA-MM-DD' (opcional)
+  // EXEMPLOS: troque ou apague antes de divulgar. Para desativar um cupom, é só apagar a linha dele.
+  cupons: {
+    'SONHOS10':    { tipo: 'porcentagem', valor: 10 },
+    'BEMVINDA20':  { tipo: 'reais', valor: 20, minimo: 200 },
+    'FRETEGRATIS': { tipo: 'frete', minimo: 400, validade: '2026-12-31' }
+  },
+
   produtos: {
     ana: {
       nome: 'Bag Ana', preco: 289,
@@ -235,11 +246,67 @@ function atualizarCalculos() {
   if (erro && envioEscolhido()) erro.classList.add('hidden');
 }
 
+/* ---------- Cupom de desconto ---------- */
+let cupom = '';
+const normalizarCupom = (t) => String(t || '').toUpperCase().replace(/\s+/g, '');
+const hojeIso = () => { const d = new Date(), z = (n) => String(n).padStart(2, '0'); return `${d.getFullYear()}-${z(d.getMonth() + 1)}-${z(d.getDate())}`; };
+
+// Diz se o cupom vale agora; se não valer, explica o motivo
+function checarCupom(codigo) {
+  const regra = CONFIG.cupons[codigo];
+  if (!regra) return { ok: false, motivo: 'Cupom não encontrado. Confira se digitou certinho.' };
+  if (regra.validade && hojeIso() > regra.validade) return { ok: false, motivo: 'Este cupom já expirou.' };
+  if (regra.minimo && subtotal() < regra.minimo) return { ok: false, abaixoDoMinimo: true, motivo: `Este cupom vale para compras a partir de ${reais(regra.minimo)} em bolsas.` };
+  return { ok: true, regra };
+}
+
+function valorDesconto() {
+  if (!cupom) return 0;
+  const c = checarCupom(cupom);
+  if (!c.ok) return 0;
+  const envio = envioEscolhido();
+  if (c.regra.tipo === 'porcentagem') return Math.round(subtotal() * c.regra.valor) / 100;
+  if (c.regra.tipo === 'reais') return Math.min(c.regra.valor, subtotal());
+  if (c.regra.tipo === 'frete') return envio ? envio.valor : 0;
+  return 0;
+}
+
+const totalPedido = () => { const envio = envioEscolhido(); return subtotal() - valorDesconto() + (envio ? envio.valor : 0); };
+
+function htmlCupom(mensagem = '') {
+  if (cupom) {
+    const c = checarCupom(cupom);
+    const descricao = !c.ok ? '' : c.regra.tipo === 'frete' ? 'frete grátis' : c.regra.tipo === 'porcentagem' ? c.regra.valor + '% de desconto' : reais(c.regra.valor) + ' de desconto';
+    return `<div class="flex items-center justify-between gap-3 rounded-xl border ${c.ok ? 'border-ouro bg-white' : 'border-vinho/40 bg-white'} px-4 py-3">
+        <p class="text-sm"><span class="text-ouro-texto" aria-hidden="true">♥</span> Cupom <strong class="font-medium">${esc(cupom)}</strong>${c.ok ? ` aplicado: ${descricao}` : ''}</p>
+        <button type="button" data-acao="remover-cupom" class="text-sm underline underline-offset-4 text-tinta-suave hover:text-vinho shrink-0">Remover</button>
+      </div>
+      ${c.ok ? '' : `<p class="mt-2 text-sm text-vinho" role="alert">${esc(c.motivo)}</p>`}`;
+  }
+  return `<form data-cupom class="flex gap-2" novalidate>
+      <label class="flex-1"><span class="sr-only">Cupom de desconto</span><input class="campo uppercase placeholder:normal-case" name="cupom" placeholder="Tem um cupom de desconto?" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="30"></label>
+      <button type="submit" class="btn-contorno !px-5 shrink-0">Aplicar</button>
+    </form>
+    ${mensagem ? `<p class="mt-2 text-sm text-vinho" role="alert">${esc(mensagem)}</p>` : ''}`;
+}
+
+function atualizarCupom(mensagem) {
+  const caixa = $('[data-cupom-caixa]');
+  if (caixa) caixa.innerHTML = htmlCupom(mensagem);
+  const totais = $('[data-totais]');
+  if (totais) totais.innerHTML = htmlTotais();
+}
+
 function htmlTotais() {
   const envio = envioEscolhido();
+  const desconto = valorDesconto();
+  const linhaCupom = cupom && checarCupom(cupom).ok
+    ? `<div class="flex justify-between text-ouro-texto"><span>Cupom ${esc(cupom)}</span><span>${desconto ? '− ' + reais(desconto) : 'frete grátis'}</span></div>`
+    : '';
   return `<div class="flex justify-between"><span>Subtotal</span><span>${reais(subtotal())}</span></div>
     <div class="flex justify-between"><span>Frete${envio ? ' (' + envio.nome + ')' : ''}</span><span>${envio ? reais(envio.valor) : 'Calcule acima'}</span></div>
-    <div class="flex justify-between text-xl font-medium mt-2"><span>Total</span><span>${reais(subtotal() + (envio ? envio.valor : 0))}</span></div>`;
+    ${linhaCupom}
+    <div class="flex justify-between text-xl font-medium mt-2"><span>Total</span><span>${reais(totalPedido())}</span></div>`;
 }
 
 /* ---------- Produto ---------- */
@@ -311,6 +378,7 @@ function viewSacola() {
   return cabecalhoSacola('Sua sacola') + `<div class="flex-1 overflow-y-auto px-5">
       <ul>${linhas}</ul>
       <div class="py-5">${htmlCalculadora()}</div>
+      <div data-cupom-caixa class="pb-5">${htmlCupom()}</div>
     </div>
     <footer class="shrink-0 border-t border-areia px-5 py-4 bg-marfim">
       <div data-totais class="space-y-1">${htmlTotais()}</div>
@@ -361,7 +429,8 @@ function mensagemPedido() {
     ...linhas,
     `Subtotal: ${reais(subtotal())}`,
     `Frete (${envio.nome}): ${reais(envio.valor)}`,
-    `*Total: ${reais(subtotal() + envio.valor)}*`,
+    ...(cupom && checarCupom(cupom).ok ? [`Cupom ${cupom}: −${reais(valorDesconto())}`] : []),
+    `*Total: ${reais(totalPedido())}*`,
     `Previsão de entrega: até ${envio.chegada.toLocaleDateString('pt-BR')} (${envio.diasTotal} dias úteis)`,
     '',
     '*Entrega*',
@@ -492,11 +561,17 @@ document.addEventListener('click', (e) => {
     etapa = 'dados';
     renderSacola();
   }
+  if (acao === 'remover-cupom') {
+    cupom = '';
+    atualizarCupom();
+    refocar('input[name=cupom]');
+  }
   if (acao === 'voltar-sacola') { lerFormulario(); etapa = 'sacola'; renderSacola(); }
   if (acao === 'enviar') {
     // O link abre o WhatsApp; a tela muda logo depois para não cancelar a abertura
     setTimeout(() => {
       itens = {};
+      cupom = '';
       salvar();
       atualizarContador();
       etapa = 'enviado';
@@ -515,12 +590,34 @@ document.addEventListener('submit', (e) => {
     e.preventDefault();
     buscarCep(e.target.elements.cep.value);
   }
+  if (e.target.matches('[data-cupom]')) {
+    e.preventDefault();
+    const codigo = normalizarCupom(e.target.elements.cupom.value);
+    if (!codigo) { atualizarCupom('Digite o código do cupom.'); $('input[name=cupom]').focus(); return; }
+    const c = checarCupom(codigo);
+    // Código inexistente ou vencido não fica aplicado; compra abaixo do mínimo fica, com o aviso do que falta
+    if (!c.ok && !c.abaixoDoMinimo) {
+      atualizarCupom(c.motivo);
+      const campo = $('input[name=cupom]');
+      campo.value = codigo; campo.focus();
+      return;
+    }
+    cupom = codigo;
+    atualizarCupom();
+  }
   if (e.target.id === 'form-dados') {
     e.preventDefault();
     lerFormulario();
     // Se a cliente trocou o estado, o frete segue o estado informado no endereço
     if (cliente.uf && cliente.uf !== entrega.uf) entrega.uf = cliente.uf;
-    codigoPedido = codigoPedido || 'RM-' + new Date().toISOString().slice(2, 10).replace(/-/g, '') + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+    // Código de 6 dígitos com cara de aleatório, ex.: RM-483920.
+    // Vem do minuto do pedido embaralhado por uma fórmula que nunca dá o mesmo número para minutos diferentes
+    // (vale por cerca de 1 ano e 11 meses a partir de 01/11/2026; só repetiria se 2 pedidos fossem no mesmo minuto).
+    if (!codigoPedido) {
+      const minuto = Math.floor((Date.now() - Date.UTC(2026, 10, 1)) / 60000);
+      const n = ((minuto % 1000000) + 1000000) % 1000000;
+      codigoPedido = 'RM-' + String((n * 738317 + 271828) % 1000000).padStart(6, '0');
+    }
     etapa = 'revisao';
     renderSacola();
   }
