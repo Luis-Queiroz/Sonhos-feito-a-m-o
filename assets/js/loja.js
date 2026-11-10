@@ -33,6 +33,11 @@ const CONFIG = {
       descricao: 'Vermelha, leve e prática. Praticidade e beleza para o seu dia a dia, com estilo único.',
       detalhes: ['Crochê feito à mão', 'Argolas douradas', 'Selo “Feito à mão”', 'Leve e prática']
     },
+    michele: {
+      nome: 'Bag Michele', preco: 279,
+      descricao: 'Caramelo, com fecho dourado e corrente de elos em tom âmbar. Elegância e versatilidade em uma só bolsa.',
+      detalhes: ['Crochê feito à mão', 'Fecho dourado', 'Corrente de elos em tom âmbar']
+    },
     rosa: {
       nome: 'Bolsa Rosa', preco: 239,
       descricao: 'Em formato de flor, com alça de corrente. Para quando o look pede um ponto de destaque.',
@@ -457,6 +462,7 @@ document.addEventListener('click', (e) => {
   if (acao === 'fechar-sacola') { $('#sacola').close(); if (etapa === 'enviado') etapa = 'sacola'; }
   if (acao === 'adicionar') {
     adicionar(id);
+    if ($('#produto').open) $('#produto').close();
     if (etapa === 'enviado') etapa = 'sacola';
     aviso(CONFIG.produtos[id].nome + ' na sacola ♥');
   }

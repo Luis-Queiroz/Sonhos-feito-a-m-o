@@ -147,19 +147,16 @@
           <h2 class="font-titulo font-medium text-4xl sm:text-5xl leading-tight">Escolha a sua. O resto é com as nossas mãos.</h2>
         </div>
 
-        <ul class="mt-10 grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6 lg:gap-8">
+        <ul class="mt-10 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           <li class="revelar group bg-white rounded-2xl sm:rounded-3xl overflow-hidden border border-areia flex flex-col" data-produto="ana">
             <button type="button" data-acao="abrir-produto" data-id="ana" class="block aspect-[5/4] overflow-hidden bg-noir" aria-label="Ver detalhes da Bag Ana">
               <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" src="assets/img/ana.jpg" alt="Bag Ana: bolsa preta de crochê com ferragens prateadas" width="800" height="626">
             </button>
             <div class="p-3 sm:p-6 flex flex-col flex-1">
-              <h3 class="font-titulo text-xl sm:text-3xl font-semibold leading-tight">Bag Ana</h3>
+              <h3 class="font-titulo text-xl sm:text-3xl lg:text-2xl font-semibold leading-tight">Bag Ana</h3>
               <p class="mt-1 text-sm sm:text-base text-tinta-suave leading-snug sm:leading-relaxed flex-1 line-clamp-3 sm:line-clamp-none">Preta, marcante e com ferragens prateadas. Elegância em todos os momentos.</p>
               <p class="mt-3 sm:mt-4 text-lg sm:text-2xl font-medium" data-preco="ana"></p>
-              <div class="mt-3 sm:mt-4 flex flex-col sm:flex-row sm:flex-wrap gap-x-4 gap-y-1 sm:gap-y-3 sm:items-center">
-                <button type="button" data-acao="adicionar" data-id="ana" aria-label="Adicionar Bag Ana à sacola" class="btn-principal flex-1 !px-3 !py-2.5 sm:!px-6 sm:!py-3.5 text-sm sm:text-base"><span class="sm:hidden">Adicionar</span><span class="hidden sm:inline">Adicionar à sacola</span></button>
-                <button type="button" data-acao="abrir-produto" data-id="ana" class="self-center sm:self-auto py-1.5 underline underline-offset-4 text-sm hover:text-vinho">Detalhes</button>
-              </div>
+              <button type="button" data-acao="abrir-produto" data-id="ana" aria-label="Ver Bag Ana e comprar" class="btn-principal w-full mt-3 sm:mt-4 !px-3 !py-2.5 sm:!py-3.5 text-sm sm:text-base">Comprar</button>
             </div>
           </li>
 
@@ -168,13 +165,10 @@
               <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" src="assets/img/estilosa.jpg" alt="Bolsa Estilosa: bolsa vermelha de crochê com argolas douradas" width="800" height="640">
             </button>
             <div class="p-3 sm:p-6 flex flex-col flex-1">
-              <h3 class="font-titulo text-xl sm:text-3xl font-semibold leading-tight">Bolsa Estilosa</h3>
+              <h3 class="font-titulo text-xl sm:text-3xl lg:text-2xl font-semibold leading-tight">Bolsa Estilosa</h3>
               <p class="mt-1 text-sm sm:text-base text-tinta-suave leading-snug sm:leading-relaxed flex-1 line-clamp-3 sm:line-clamp-none">Vermelha, leve e prática. Praticidade e beleza para o seu dia a dia, com estilo único.</p>
               <p class="mt-3 sm:mt-4 text-lg sm:text-2xl font-medium" data-preco="estilosa"></p>
-              <div class="mt-3 sm:mt-4 flex flex-col sm:flex-row sm:flex-wrap gap-x-4 gap-y-1 sm:gap-y-3 sm:items-center">
-                <button type="button" data-acao="adicionar" data-id="estilosa" aria-label="Adicionar Bolsa Estilosa à sacola" class="btn-principal flex-1 !px-3 !py-2.5 sm:!px-6 sm:!py-3.5 text-sm sm:text-base"><span class="sm:hidden">Adicionar</span><span class="hidden sm:inline">Adicionar à sacola</span></button>
-                <button type="button" data-acao="abrir-produto" data-id="estilosa" class="self-center sm:self-auto py-1.5 underline underline-offset-4 text-sm hover:text-vinho">Detalhes</button>
-              </div>
+              <button type="button" data-acao="abrir-produto" data-id="estilosa" aria-label="Ver Bolsa Estilosa e comprar" class="btn-principal w-full mt-3 sm:mt-4 !px-3 !py-2.5 sm:!py-3.5 text-sm sm:text-base">Comprar</button>
             </div>
           </li>
 
@@ -183,13 +177,22 @@
               <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" src="assets/img/rosa.jpg" alt="Bolsa de crochê pink em formato de rosa, com alça de corrente prateada" width="800" height="639">
             </button>
             <div class="p-3 sm:p-6 flex flex-col flex-1">
-              <h3 class="font-titulo text-xl sm:text-3xl font-semibold leading-tight">Bolsa Rosa</h3>
+              <h3 class="font-titulo text-xl sm:text-3xl lg:text-2xl font-semibold leading-tight">Bolsa Rosa</h3>
               <p class="mt-1 text-sm sm:text-base text-tinta-suave leading-snug sm:leading-relaxed flex-1 line-clamp-3 sm:line-clamp-none">Em formato de flor, com alça de corrente. Para quando o look pede um ponto de destaque.</p>
               <p class="mt-3 sm:mt-4 text-lg sm:text-2xl font-medium" data-preco="rosa"></p>
-              <div class="mt-3 sm:mt-4 flex flex-col sm:flex-row sm:flex-wrap gap-x-4 gap-y-1 sm:gap-y-3 sm:items-center">
-                <button type="button" data-acao="adicionar" data-id="rosa" aria-label="Adicionar Bolsa Rosa à sacola" class="btn-principal flex-1 !px-3 !py-2.5 sm:!px-6 sm:!py-3.5 text-sm sm:text-base"><span class="sm:hidden">Adicionar</span><span class="hidden sm:inline">Adicionar à sacola</span></button>
-                <button type="button" data-acao="abrir-produto" data-id="rosa" class="self-center sm:self-auto py-1.5 underline underline-offset-4 text-sm hover:text-vinho">Detalhes</button>
-              </div>
+              <button type="button" data-acao="abrir-produto" data-id="rosa" aria-label="Ver Bolsa Rosa e comprar" class="btn-principal w-full mt-3 sm:mt-4 !px-3 !py-2.5 sm:!py-3.5 text-sm sm:text-base">Comprar</button>
+            </div>
+          </li>
+
+          <li class="revelar group bg-white rounded-2xl sm:rounded-3xl overflow-hidden border border-areia flex flex-col" data-produto="michele">
+            <button type="button" data-acao="abrir-produto" data-id="michele" class="block aspect-[5/4] overflow-hidden bg-areia" aria-label="Ver detalhes da Bag Michele">
+              <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" src="assets/img/michele.jpg" alt="Bag Michele: bolsa de crochê caramelo com fecho dourado e corrente de elos em tom âmbar" width="800" height="640">
+            </button>
+            <div class="p-3 sm:p-6 flex flex-col flex-1">
+              <h3 class="font-titulo text-xl sm:text-3xl lg:text-2xl font-semibold leading-tight">Bag Michele</h3>
+              <p class="mt-1 text-sm sm:text-base text-tinta-suave leading-snug sm:leading-relaxed flex-1 line-clamp-3 sm:line-clamp-none">Caramelo, com fecho dourado e corrente de elos em tom âmbar. Elegância e versatilidade em uma só bolsa.</p>
+              <p class="mt-3 sm:mt-4 text-lg sm:text-2xl font-medium" data-preco="michele"></p>
+              <button type="button" data-acao="abrir-produto" data-id="michele" aria-label="Ver Bag Michele e comprar" class="btn-principal w-full mt-3 sm:mt-4 !px-3 !py-2.5 sm:!py-3.5 text-sm sm:text-base">Comprar</button>
             </div>
           </li>
         </ul>
