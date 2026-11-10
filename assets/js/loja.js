@@ -8,6 +8,11 @@ const CONFIG = {
   documento: '',      // Ex.: 'CNPJ 00.000.000/0001-00'
   enderecoLoja: '',   // Ex.: 'Rua Exemplo, 100, Cidade/UF'
 
+  // Métricas anônimas (GoatCounter: grátis, sem cookies, sem dados pessoais).
+  // Crie a conta em goatcounter.com e coloque aqui só o código escolhido. Ex.: 'sonhosrm'
+  // Vazio = métricas desligadas.
+  metricas: '',
+
   // Dias úteis para fazer a bolsa à mão, antes da postagem.
   diasProducao: 5,
 
@@ -90,6 +95,27 @@ const reais = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'B
 const esc = (t) => String(t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const dataCurta = (d) => d.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' });
 const UFS = Object.values(CONFIG.regioes).flatMap((r) => r.ufs).sort();
+
+/* ---------- Métricas anônimas (GoatCounter) ----------
+   Conta visitas e ações (bolsa vista, sacola, pedido). Nunca envia nome, telefone, CEP ou endereço.
+   De onde a cliente veio: use links com ?ref=, ex.: ...github.io/Sonhos-feito-a-m-o/?ref=instagram */
+const codigoMetricas = String(CONFIG.metricas || '').trim().toLowerCase();
+const testeLocal = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || location.protocol === 'file:';
+if (/^[a-z0-9-]+$/.test(codigoMetricas) && !testeLocal) {
+  const s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://gc.zgo.at/count.js';
+  s.dataset.goatcounter = `https://${codigoMetricas}.goatcounter.com/count`;
+  document.head.appendChild(s);
+  const aviso = document.getElementById('aviso-metricas');
+  if (aviso) aviso.hidden = false;
+}
+const medidos = new Set();
+// Registra uma ação como evento. "umaVez" evita contar a mesma ação repetida na mesma visita.
+function medir(evento, titulo, umaVez = false) {
+  if (umaVez) { if (medidos.has(evento)) return; medidos.add(evento); }
+  try { if (window.goatcounter && window.goatcounter.count) window.goatcounter.count({ path: evento, title: titulo || evento, event: true }); } catch (e) { /* métricas nunca atrapalham a compra */ }
+}
 
 /* ---------- Dias úteis: sem fim de semana e feriados nacionais ---------- */
 function pascoa(ano) {
@@ -180,6 +206,7 @@ async function buscarCep(valor) {
     if (entrega.cep !== cep) return; // a cliente já digitou outro CEP
     if (!endereco) { entrega.estado = 'naoencontrado'; return atualizarCalculos(); }
     Object.assign(entrega, endereco, { estado: 'ok' });
+    medir('frete-' + endereco.uf, 'Frete calculado para ' + endereco.uf, true); // só o estado, nunca o CEP
     Object.assign(cliente, { logradouro: endereco.logradouro, bairro: endereco.bairro, cidade: endereco.cidade, uf: endereco.uf });
   } catch (e) {
     if (entrega.cep !== cep) return;
@@ -472,11 +499,24 @@ function viewRevisao() {
 }
 
 function viewEnviado() {
-  return cabecalhoSacola('Pedido criado') + `<div class="flex-1 flex flex-col items-center justify-center text-center p-8">
-      <p class="font-script text-5xl text-ouro-texto">Obrigada!</p>
-      <p class="mt-3 text-lg">Seu pedido <strong class="font-medium">${esc(codigoPedido)}</strong> foi aberto no WhatsApp.</p>
-      <p class="mt-2 text-tinta-suave">É só tocar em enviar na conversa. Nós confirmamos os detalhes e enviamos os dados de pagamento.</p>
-      <button type="button" data-acao="fechar-sacola" class="btn-contorno mt-6">Voltar para a loja</button>
+  // Corações dourados em posições, tamanhos e tempos variados
+  const tons = ['#B08D57', '#DCC295', '#83622F', '#C9A86E'];
+  const coracoes = Array.from({ length: 22 }, (_, i) => {
+    const r = (n) => Math.random() * n;
+    return `<span style="left:${r(100).toFixed(1)}%;font-size:${(10 + r(14)).toFixed(0)}px;color:${tons[i % tons.length]};animation-duration:${(3.2 + r(2.6)).toFixed(2)}s;animation-delay:${r(1.6).toFixed(2)}s;--deriva:${(r(80) - 40).toFixed(0)}px;--giro:${(r(120) - 60).toFixed(0)}deg">♥</span>`;
+  }).join('');
+  return cabecalhoSacola('Pedido criado') + `<div class="relative flex-1 flex flex-col items-center justify-center text-center p-8 overflow-hidden">
+      <div class="chuva-coracoes" aria-hidden="true">${coracoes}</div>
+      <div class="relative z-10 obrigada-entrar">
+        <p class="font-script text-6xl text-ouro-texto">Obrigada!</p>
+        <p class="mt-4 text-lg">Seu pedido <strong class="font-medium">${esc(codigoPedido)}</strong> foi aberto no WhatsApp.</p>
+        <p class="mt-2 text-tinta-suave">É só tocar em enviar na conversa. Nós confirmamos os detalhes e enviamos os dados de pagamento.</p>
+        <div class="flex items-center justify-center gap-3 my-6 text-ouro" aria-hidden="true"><span class="h-px w-12 bg-ouro/50"></span>♥<span class="h-px w-12 bg-ouro/50"></span></div>
+        <p class="font-titulo text-xl leading-snug max-w-xs mx-auto">Assim que o pagamento for confirmado, sua bolsa entra na nossa fila de produção e começa a nascer, ponto a ponto.</p>
+        <p class="mt-6 text-sm text-tinta-suave">Com carinho,</p>
+        <p class="font-script text-4xl text-ouro-texto leading-tight">equipe Sonhos RM</p>
+        <button type="button" data-acao="fechar-sacola" class="btn-contorno mt-7">Voltar para a loja</button>
+      </div>
     </div>`;
 }
 
@@ -510,6 +550,41 @@ function adicionar(id) {
   atualizarCalculos();
 }
 
+const semMovimento = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// A sacola do topo "pulsa" para mostrar que recebeu a bolsa
+function pulsarSacola() {
+  const botao = $('[data-acao="abrir-sacola"]');
+  if (!botao.animate || semMovimento()) return;
+  botao.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.28)' }, { transform: 'scale(.94)' }, { transform: 'scale(1)' }], { duration: 520, easing: 'ease-out' });
+  $('#contador').animate([{ transform: 'scale(.4)' }, { transform: 'scale(1.25)' }, { transform: 'scale(1)' }], { duration: 420, easing: 'ease-out' });
+}
+
+// Miniatura da bolsa voa, em arco, da foto até a sacola do topo
+function voarParaSacola(origem) {
+  const destino = $('[data-acao="abrir-sacola"]').getBoundingClientRect();
+  if (!origem || !origem.width || !document.body.animate || semMovimento()) { pulsarSacola(); return; }
+  const lado = Math.min(150, origem.width, origem.height);
+  const x0 = origem.left + origem.width / 2 - lado / 2, y0 = origem.top + origem.height / 2 - lado / 2;
+  const x1 = destino.left + destino.width / 2 - lado / 2, y1 = destino.top + destino.height / 2 - lado / 2;
+  const meioX = (x0 + x1) / 2, meioY = Math.min(y0, y1) - 80; // ponto alto do arco
+  const voo = document.createElement('img');
+  voo.src = origem.src;
+  voo.alt = '';
+  voo.setAttribute('aria-hidden', 'true');
+  Object.assign(voo.style, { position: 'fixed', left: '0', top: '0', width: lado + 'px', height: lado + 'px', objectFit: 'cover', borderRadius: '50%', border: '2px solid #DCC295', boxShadow: '0 10px 30px rgba(22,17,13,.35)', zIndex: '100', pointerEvents: 'none' });
+  document.body.appendChild(voo);
+  const animacao = voo.animate([
+    { transform: `translate(${x0}px, ${y0}px) scale(1)`, opacity: 1 },
+    { transform: `translate(${meioX}px, ${Math.max(8, meioY)}px) scale(.55)`, opacity: 1, offset: .5 },
+    { transform: `translate(${x1}px, ${y1}px) scale(.12)`, opacity: .6 }
+  ], { duration: 820, easing: 'cubic-bezier(.4, 0, .6, 1)' });
+  let terminou = false;
+  const fim = () => { if (terminou) return; terminou = true; voo.remove(); pulsarSacola(); };
+  animacao.onfinish = animacao.oncancel = fim;
+  setTimeout(fim, 1100); // garantia: a miniatura nunca fica parada na tela (ex.: aba em segundo plano)
+}
+
 function abrirSacola() {
   if (etapa === 'enviado' && totalBolsas()) etapa = 'sacola';
   renderSacola();
@@ -521,17 +596,26 @@ document.addEventListener('click', (e) => {
   const alvo = e.target.closest('[data-acao]');
   if (e.target === $('#produto')) $('#produto').close();
   if (e.target === $('#sacola')) $('#sacola').close();
+  const linkWhats = e.target.closest('a[href*="wa.me"]');
+  if (linkWhats && !linkWhats.dataset.acao) medir('whatsapp-contato', 'Chamou no WhatsApp (fora da sacola)');
   if (!alvo) return;
   const { acao, id } = alvo.dataset;
   const refocar = (seletor) => { const el = $(seletor, $('#sacola')); if (el) el.focus(); };
 
-  if (acao === 'abrir-produto') abrirProduto(id);
+  if (acao === 'abrir-produto') { abrirProduto(id); medir('bolsa-vista-' + id, 'Abriu ' + CONFIG.produtos[id].nome, true); }
+  if (acao === 'adicionar' || acao === 'comprar') medir('sacola-' + id, CONFIG.produtos[id].nome + ' na sacola');
+  if (acao === 'abrir-sacola') medir('sacola-aberta', 'Abriu a sacola', true);
+  if (acao === 'enviar') medir('pedido-whatsapp', 'Pedido enviado pelo WhatsApp');
   if (acao === 'fechar-produto') $('#produto').close();
   if (acao === 'abrir-sacola') { etapa = etapa === 'enviado' ? 'sacola' : etapa; abrirSacola(); }
   if (acao === 'fechar-sacola') { $('#sacola').close(); if (etapa === 'enviado') etapa = 'sacola'; }
   if (acao === 'adicionar') {
+    // Guarda a posição da foto antes de fechar a janela, para a bolsa "voar" dali
+    const foto = $('#produto[open] img') || $(`[data-produto="${id}"] img`);
+    const origem = foto ? Object.assign(foto.getBoundingClientRect().toJSON(), { src: foto.currentSrc || foto.src }) : null;
     adicionar(id);
     if ($('#produto').open) $('#produto').close();
+    voarParaSacola(origem);
     if (etapa === 'enviado') etapa = 'sacola';
     aviso(CONFIG.produtos[id].nome + ' na sacola ♥');
   }
@@ -559,6 +643,7 @@ document.addEventListener('click', (e) => {
       return;
     }
     etapa = 'dados';
+    medir('checkout-dados', 'Foi para Seus dados', true);
     renderSacola();
   }
   if (acao === 'remover-cupom') {
@@ -603,6 +688,7 @@ document.addEventListener('submit', (e) => {
       return;
     }
     cupom = codigo;
+    medir('cupom-' + codigo, 'Cupom ' + codigo, true);
     atualizarCupom();
   }
   if (e.target.id === 'form-dados') {
@@ -619,6 +705,7 @@ document.addEventListener('submit', (e) => {
       codigoPedido = 'RM-' + String((n * 738317 + 271828) % 1000000).padStart(6, '0');
     }
     etapa = 'revisao';
+    medir('checkout-revisao', 'Chegou na revisão do pedido', true);
     renderSacola();
   }
 });

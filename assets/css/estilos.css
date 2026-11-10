@@ -22,9 +22,33 @@ summary::-webkit-details-marker { display: none; }
 details[open] .sinal { transform: rotate(45deg); }
 .sinal { transition: transform .2s; }
 
+/* Fio dourado que se desenha sob o título, como uma corrente de crochê */
+.fio-titulo { display: block; width: min(17rem, 80%); height: auto; margin-top: .6rem; overflow: visible; }
+.fio-titulo path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: tecer 2.6s cubic-bezier(.45, .05, .35, 1) .5s forwards; }
+.fio-titulo circle { opacity: 0; animation: brilhar .6s ease 2.9s forwards; }
+@keyframes tecer { to { stroke-dashoffset: 0; } }
+@keyframes brilhar { 0% { opacity: 0; transform: scale(.4); } 60% { opacity: 1; transform: scale(1.4); } 100% { opacity: 1; transform: scale(1); } }
+@media (min-width: 1024px) { .fio-titulo { width: 22rem; } }
+
+/* Corações dourados na tela de "Obrigada" */
+.chuva-coracoes { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+.chuva-coracoes span { position: absolute; top: -2rem; animation: cair linear forwards; opacity: 0; }
+@keyframes cair {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  10% { opacity: .6; }
+  85% { opacity: .45; }
+  100% { transform: translate(var(--deriva), 105vh) rotate(var(--giro)); opacity: 0; }
+}
+.obrigada-entrar { animation: obrigadaEntrar .7s ease both; }
+@keyframes obrigadaEntrar { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .revelar { opacity: 1; transform: none; transition: none; }
+  .fio-titulo path { animation: none; stroke-dashoffset: 0; }
+  .fio-titulo circle { animation: none; opacity: 1; }
+  .chuva-coracoes { display: none; }
+  .obrigada-entrar { animation: none; }
   #sacola[open] { animation: none; }
   * { transition: none !important; }
 }

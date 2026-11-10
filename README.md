@@ -84,6 +84,35 @@ Os textos e os cards das bolsas ficam no `index.html`. Para adicionar um modelo,
 - **Sacola:** fica salva no navegador da própria cliente.
 - **Tailwind:** é carregado pelo CDN. Para um site em produção, o recomendado é compilar o CSS.
 
+## Métricas (GoatCounter)
+
+Métricas anônimas e gratuitas: sem cookies, sem banner de consentimento e sem dados pessoais.
+
+1. Crie a conta em [goatcounter.com](https://www.goatcounter.com) e escolha um código, por exemplo `sonhosrm`.
+2. Em `assets/js/loja.js`, preencha `metricas: 'sonhosrm'`.
+3. Envie o `loja.js` ao GitHub. O painel fica em `https://sonhosrm.goatcounter.com`.
+
+Para saber de onde as clientes vêm, use links com `?ref=`:
+
+- Bio do Instagram: `https://luis-queiroz.github.io/Sonhos-feito-a-m-o/?ref=instagram`
+- Status e mensagens do WhatsApp: `...?ref=whatsapp`
+
+No painel, em **Events**, aparecem as ações:
+
+| Evento | O que significa |
+|---|---|
+| `bolsa-vista-ana`, `bolsa-vista-rosa`... | Abriu os detalhes da bolsa |
+| `sacola-ana`, `sacola-rosa`... | Colocou a bolsa na sacola |
+| `sacola-aberta` | Abriu a sacola |
+| `frete-PR`, `frete-SP`... | Calculou o frete (só o estado, nunca o CEP) |
+| `cupom-SONHOS10`... | Aplicou um cupom |
+| `checkout-dados` | Foi para "Seus dados" |
+| `checkout-revisao` | Chegou na revisão do pedido |
+| `pedido-whatsapp` | Enviou o pedido pelo WhatsApp |
+| `whatsapp-contato` | Chamou no WhatsApp fora da sacola |
+
+Testes no próprio computador (`localhost`) não são contados.
+
 ## Antes de divulgar
 
 - [ ] Preencher os preços reais das bolsas
@@ -92,4 +121,6 @@ Os textos e os cards das bolsas ficam no `index.html`. Para adicionar um modelo,
 - [ ] Adicionar avaliações reais em `depoimentos`, com autorização das clientes (opcional)
 - [ ] Confirmar o nome "Bolsa Rosa"
 - [ ] Preencher `documento` e `enderecoLoja`, exigidos para venda online pelo Decreto 7.962/2013
+- [ ] Trocar ou apagar os cupons de exemplo em `cupons`
+- [ ] Criar a conta no GoatCounter e preencher `metricas` (opcional)
 - [ ] Fazer um pedido de teste até o WhatsApp
